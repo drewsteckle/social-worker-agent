@@ -68,6 +68,14 @@ The HTML inside [TEMPLATE] tags must be a complete, professional, printable docu
 PDF OFFER:
 When your response contains a completed calculation, structured summary, or any output the user would likely want to save or print, add [ASK_PDF] on its own line at the very end of your response. Do not add [ASK_PDF] for general conversational replies.
 
+CONVERSATION END SIGNAL:
+Add [END_CONV] at the very end of your response when any of the following are true:
+- You have fully answered the question and there are no obvious follow-ups remaining
+- The user says something like "thanks", "got it", "that's all", "perfect", or any other closing statement
+- You have referred the user to their local ODSP office as a final step and the question is resolved
+- The conversation has reached a natural conclusion
+Do not add [END_CONV] mid-conversation or when the user is likely to have follow-up questions.
+
 ---
 
 ODSP POLICY DIRECTIVES — REFERENCE DOCUMENT:

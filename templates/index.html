@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Worker Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f0f4f8;
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f8f8;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -25,44 +26,79 @@
             overflow: hidden;
         }
 
-        .header {
-            background: #00853F;
-            color: white;
-            padding: 20px 24px 0;
-            position: relative;
+        .header-top {
+            flex-shrink: 0;
         }
 
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+        /* --- Ontario.ca style header --- */
+        .header-top {
+            background: #1a1a1a;
+            color: white;
+            padding: 10px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-top-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
         .header-logo {
-            position: absolute;
-            right: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 60px;
+            height: 44px;
         }
 
-        .tabs {
+        .header-title-block h1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.2px;
+        }
+
+        .header-title-block p {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        /* --- Navigation sidebar --- */
+        .nav-bar {
+            background: #00853F;
             display: flex;
-            gap: 4px;
-            margin-top: 14px;
+            flex-direction: column;
+            padding: 8px 0;
+            border-right: 3px solid #006B32;
+            min-width: 160px;
+            flex-shrink: 0;
+            height: 100%;
         }
 
         .tab {
-            padding: 8px 18px;
+            padding: 14px 20px;
             font-size: 13px;
             font-weight: 600;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.8);
             cursor: pointer;
-            border-radius: 8px 8px 0 0;
             background: transparent;
             border: none;
+            border-left: 3px solid transparent;
+            text-align: left;
             transition: all 0.15s;
+            letter-spacing: 0.2px;
         }
 
         .tab:hover { color: white; background: rgba(255,255,255,0.1); }
-        .tab.active { background: white; color: #00853F; }
+        .tab.active { color: white; border-left: 3px solid white; background: rgba(255,255,255,0.15); }
+
+        .body-area {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            overflow: hidden;
+            height: 0;
+        }
 
         .tab-content {
             display: none;
@@ -77,10 +113,11 @@
         .chat-window {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 24px 32px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            background: #fafafa;
         }
 
         .message-row {
@@ -100,11 +137,11 @@
             height: 36px;
             border-radius: 50%;
             background: white;
-            border: 2px solid #c0cfe0;
+            border: 2px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             z-index: 1;
             position: relative;
         }
@@ -115,46 +152,47 @@
 
         .message {
             max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 12px;
+            padding: 10px 14px;
+            border-radius: 4px;
             font-size: 14px;
-            line-height: 1.4;
+            line-height: 1.6;
             word-wrap: break-word;
         }
 
         .message.user {
             background: #00853F;
             color: white;
-            border-bottom-right-radius: 4px;
         }
 
         .message.assistant {
-            background: #f0f4f8;
+            background: white;
             color: #1a1a1a;
-            border-bottom-left-radius: 4px;
+            border: 1px solid #e0e0e0;
         }
 
-        .message.assistant h1, .message.assistant h2, .message.assistant h3 { margin: 14px 0 4px; font-size: 14px; }
+        .message.assistant h1, .message.assistant h2, .message.assistant h3 { margin: 14px 0 4px; font-size: 14px; font-weight: 700; color: #1a1a1a; }
         .message.assistant h1:first-child, .message.assistant h2:first-child, .message.assistant h3:first-child { margin-top: 4px; }
-        .message.assistant ul, .message.assistant ol { padding-left: 16px; margin: 2px 0; }
-        .message.assistant li { margin: 1px 0; }
-        .message.assistant p { margin: 2px 0; }
+        .message.assistant ul, .message.assistant ol { padding-left: 16px; margin: 4px 0; }
+        .message.assistant li { margin: 2px 0; }
+        .message.assistant p { margin: 3px 0; }
         .message.assistant strong { font-weight: 700; }
-        .message.assistant hr { border: none; border-top: 1px solid #ccc; margin: 4px 0; }
-        .message.assistant blockquote { border-left: 3px solid #00853F; padding-left: 8px; color: #555; margin: 4px 0; }
+        .message.assistant hr { border: none; border-top: 1px solid #ddd; margin: 6px 0; }
+        .message.assistant a { color: #0066CC; }
+        .message.assistant blockquote { border-left: 4px solid #00853F; padding-left: 10px; color: #555; margin: 6px 0; }
 
         .input-area {
-            padding: 16px 24px;
-            border-top: 1px solid #e0e0e0;
+            padding: 16px 32px;
+            border-top: 1px solid #ddd;
             display: flex;
             gap: 12px;
+            background: white;
         }
 
         textarea {
             flex: 1;
             padding: 12px 16px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            border: 1px solid #bbb;
+            border-radius: 2px;
             font-size: 14px;
             font-family: inherit;
             resize: none;
@@ -163,28 +201,30 @@
             max-height: 150px;
         }
 
-        textarea:focus { border-color: #00853F; }
+        textarea:focus { border-color: #00853F; box-shadow: 0 0 0 2px rgba(0,133,63,0.15); }
 
         button {
             background: #00853F;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 0 20px;
+            border-radius: 2px;
+            padding: 0 24px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+            letter-spacing: 0.3px;
         }
 
         button:hover { background: #006B32; }
         button:disabled { background: #aaa; cursor: not-allowed; }
 
         .typing {
-            background: #f0f4f8;
+            background: white;
+            border: 1px solid #e0e0e0;
             color: #888;
             align-self: flex-start;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 14px;
+            border-radius: 4px;
             font-size: 14px;
         }
 
@@ -192,13 +232,18 @@
         .static-tab {
             flex: 1;
             overflow-y: auto;
-            padding: 32px;
+            padding: 36px 48px;
+            background: white;
         }
 
         .static-tab h2 {
-            font-size: 18px;
-            color: #00853F;
-            margin-bottom: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            padding-bottom: 12px;
+            border-bottom: 4px solid #00853F;
+            display: inline-block;
         }
 
         .static-tab p, .static-tab li {
@@ -206,6 +251,9 @@
             line-height: 1.8;
             color: #333;
         }
+
+        .static-tab a { color: #0066CC; }
+        .static-tab a:hover { text-decoration: underline; }
 
         .static-tab ul {
             padding-left: 20px;
@@ -215,17 +263,20 @@
         .static-tab li { margin-bottom: 6px; }
 
         .static-tab .card {
-            background: #f0f4f8;
-            border-radius: 10px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
+            background: white;
+            border: 1px solid #ddd;
+            border-left: 4px solid #00853F;
+            border-radius: 2px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            margin-top: 18px;
         }
 
         .static-tab .card h3 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            color: #00853F;
-            margin-bottom: 6px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
         }
 
         /* Notes tab */
@@ -233,8 +284,9 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            padding: 24px 32px;
             gap: 12px;
+            background: white;
         }
 
         .notes-area label {
@@ -247,11 +299,11 @@
             flex: 1;
             height: auto;
             max-height: none;
-            border-radius: 10px;
+            border-radius: 2px;
             padding: 16px;
             font-size: 14px;
             line-height: 1.7;
-            border: 1px solid #ddd;
+            border: 1px solid #bbb;
             resize: none;
             outline: none;
         }
@@ -262,23 +314,88 @@
             align-self: flex-end;
             padding: 10px 24px;
         }
+
+        /* --- Sidebar toggle --- */
+        .nav-bar .nav-toggle {
+            margin-top: auto;
+            padding: 14px 12px;
+            background: none !important;
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0;
+            color: rgba(255,255,255,0.9) !important;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            font-weight: normal;
+            letter-spacing: 0;
+            display: block;
+        }
+
+        .nav-bar .nav-toggle:hover { color: white !important; background: rgba(255,255,255,0.1) !important; }
+
+        .nav-bar.collapsed {
+            min-width: 0;
+            width: 36px;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .tab {
+            display: none;
+        }
+
+        /* --- Collapsible cards --- */
+        .card h3 {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .card h3 .toggle-icon {
+            font-size: 11px;
+            color: #888;
+            transition: transform 0.2s;
+        }
+
+        .card-body {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 1000px;
+        }
+
+        .card.collapsed .card-body {
+            max-height: 0;
+        }
+
+        .card.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <img src="/static/logo.jpg" alt="Government of Ontario" class="header-logo">
-            <h1>ODSP Information Centre</h1>
-            <p>Ontario Public Service - Not Actually Affiliated with the Government of Ontario</p>
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('readme', this)">Read Me First</button>
-                <button class="tab" onclick="switchTab('agent', this)">Chat</button>
-                <button class="tab" onclick="switchTab('reference', this)">Reference Points</button>
-                <button class="tab" onclick="switchTab('quickfacts', this)">Quick Facts</button>
-                <button class="tab" onclick="switchTab('eligibility', this)">Eligibility Checker</button>
-                <button class="tab" onclick="switchTab('code', this)">Code</button>
+        <div class="header-top">
+            <div class="header-top-left">
+                <img src="/static/logo.jpg" alt="Government of Ontario" class="header-logo">
+                <div class="header-title-block">
+                    <h1>ODSP Information Centre</h1>
+                    <p>Ontario Public Service &mdash; Not Actually Affiliated with the Government of Ontario</p>
+                </div>
             </div>
         </div>
+        <div class="body-area">
+        <div class="nav-bar">
+            <button class="tab active" onclick="switchTab('readme', this)">Read Me First</button>
+            <button class="tab" onclick="switchTab('agent', this)">AI Agent</button>
+            <button class="tab" onclick="switchTab('reference', this)">Reference Points</button>
+            <button class="tab" onclick="switchTab('quickfacts', this)">Quick Facts</button>
+            <button class="tab" onclick="switchTab('eligibility', this)">Eligibility Checker</button>
+            <button class="tab" onclick="switchTab('code', this)">Code</button>
+        </div>
+        <button id="navToggle" onclick="toggleNav()" style="position:fixed;bottom:20px;left:10px;width:36px;height:36px;background:#006B32;color:white;border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:999;display:flex;align-items:center;justify-content:center;">↩</button>
 
         <!-- Agent Tab -->
         <div class="tab-content" id="tab-agent">
@@ -299,78 +416,94 @@
                     <p style="margin-top:12px;"><strong>This is not a product of the Ontario Government (yet 😉)</strong></p>
                 </div>
 
-                <div class="card">
-                    <h3>What Is This?</h3>
-                    <p>An AI-powered information agent trained on Ontario Disability Support Program (ODSP) Income Support Policy Directives. Designed to assist both ODSP caseworkers and recipients with quick, accurate, policy-based answers.</p>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>What Is This?</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <p>An AI-powered information agent trained on Ontario Disability Support Program (ODSP) Income Support Policy Directives. Designed to assist both ODSP caseworkers and recipients with quick, accurate, policy-based answers.</p>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>Important Limitations</h3>
-                    <ul>
-                        <li>This agent does not make eligibility determinations</li>
-                        <li>It only answers based on the directives it has been trained on — questions outside this scope will be flagged</li>
-                        <li>All information should be verified with your local ODSP office or caseworker before acting on it</li>
-                    </ul>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>Important Limitations</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <ul>
+                            <li>This agent does not make eligibility determinations</li>
+                            <li>It only answers based on the directives it has been trained on — questions outside this scope will be flagged</li>
+                            <li>All information should be verified with your local ODSP office or caseworker before acting on it</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>Privacy Notice</h3>
-                    <ul>
-                        <li>Do not enter personally identifying information into the chat — this includes full names, Social Insurance Numbers (SIN), Ontario Health Numbers, case file numbers, or dates of birth</li>
-                        <li>Use general descriptions when describing your situation (e.g. "a single recipient with two dependants" rather than specific personal details)</li>
-                        <li>This tool is not affiliated with the Ontario government and does not store or transmit information to any government system</li>
-                        <li>Conversations are not saved between sessions</li>
-                    </ul>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>Privacy Notice</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <ul>
+                            <li>Do not enter personally identifying information into the chat — this includes full names, Social Insurance Numbers (SIN), Ontario Health Numbers, case file numbers, or dates of birth</li>
+                            <li>Use general descriptions when describing your situation (e.g. "a single recipient with two dependants" rather than specific personal details)</li>
+                            <li>This tool is not affiliated with the Ontario government and does not store or transmit information to any government system</li>
+                            <li>Conversations are not saved between sessions</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>What We Trained Our Agent On</h3>
-                    <p style="margin-bottom:10px;">The agent is trained on the following ODSP policy directives for income support.</p>
-                    <ul>
-                        <li>1.1 — Applications</li>
-                        <li>1.2 — Disability Adjudication Process</li>
-                        <li>2.1 — Who is Eligible: Dependent Adults</li>
-                        <li>2.3 — Spouse</li>
-                        <li>3.1 — Reviewing Eligibility</li>
-                        <li>4.1 — Definition and Treatment of Assets</li>
-                        <li>5.1 — Definition and Treatment of Income</li>
-                        <li>6.1 — Basic Needs Calculation</li>
-                        <li>6.2 — Shelter Calculation</li>
-                    </ul>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>What We Trained Our Agent On</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <p style="margin-bottom:10px;">The agent is trained on the following ODSP policy directives for income support.</p>
+                        <ul>
+                            <li>1.1 — Applications</li>
+                            <li>1.2 — Disability Adjudication Process</li>
+                            <li>2.1 — Who is Eligible: Dependent Adults</li>
+                            <li>2.3 — Spouse</li>
+                            <li>3.1 — Reviewing Eligibility</li>
+                            <li>4.1 — Definition and Treatment of Assets</li>
+                            <li>5.1 — Definition and Treatment of Income</li>
+                            <li>6.1 — Basic Needs Calculation</li>
+                            <li>6.2 — Shelter Calculation</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>What It Can Help With</h3>
-                    <ul>
-                        <li>Eligibility questions for applicants and recipients</li>
-                        <li>Understanding asset and income limits</li>
-                        <li>Calculating basic needs and shelter amounts</li>
-                        <li>Application process and required documentation</li>
-                        <li>Reviewing eligibility and suspension conditions</li>
-                        <li>Understanding dependent adult and spousal definitions</li>
-                    </ul>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>What It Can Help With</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <ul>
+                            <li>Eligibility questions for applicants and recipients</li>
+                            <li>Understanding asset and income limits</li>
+                            <li>Calculating basic needs and shelter amounts</li>
+                            <li>Application process and required documentation</li>
+                            <li>Reviewing eligibility and suspension conditions</li>
+                            <li>Understanding dependent adult and spousal definitions</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>How It Works</h3>
-                    <p>Ask a question in plain language. The agent will respond with a direct answer based strictly on the policy directives above, with inline citations linking back to the relevant government source for verification.</p>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>How It Works</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <p>Ask a question in plain language. The agent will respond with a direct answer based strictly on the policy directives above, with inline citations linking back to the relevant government source for verification.</p>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>Sample Questions</h3>
-                    <ul>
-                        <li><em>"What documents do I need to apply for ODSP?"</em></li>
-                        <li><em>"Is my car counted as an asset?"</em></li>
-                        <li><em>"How is my basic needs amount calculated if I have two dependants?"</em></li>
-                        <li><em>"Can my income support be suspended if I don't provide documents?"</em></li>
-                        <li><em>"What counts as financial independence for a dependent adult?"</em></li>
-                    </ul>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>Sample Questions</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <ul>
+                            <li><em>"What documents do I need to apply for ODSP?"</em></li>
+                            <li><em>"Is my car counted as an asset?"</em></li>
+                            <li><em>"How is my basic needs amount calculated if I have two dependants?"</em></li>
+                            <li><em>"Can my income support be suspended if I don't provide documents?"</em></li>
+                            <li><em>"What counts as financial independence for a dependent adult?"</em></li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>Acknowledgements</h3>
-                    <p><strong>Adam McConkey</strong></p>
-                    <p style="margin-top:8px;">We would like to extend our sincere gratitude to Adam McConkey for his guidance and expertise in helping define the scope of this agent.</p>
+                <div class="card collapsed">
+                    <h3 onclick="toggleCard(this)"><strong>Acknowledgements</strong><span class="toggle-icon">▼</span></h3>
+                    <div class="card-body">
+                        <p><strong>Adam McConkey</strong></p>
+                        <p style="margin-top:8px;">We would like to extend our sincere gratitude to Adam McConkey for his guidance and expertise in helping define the scope of this agent.</p>
+                    </div>
                 </div>
 
             </div>
@@ -654,11 +787,19 @@ if __name__ == "__main__":
             </div>
         </div>
 
+        </div><!-- end body-area -->
     </div>
 
     <script>
+        const MAX_MESSAGES = 20;
+        let userMessageCount = 0;
+
         // Intro message
         addMessage("Hello! I am an AI agent trained to assist you with any process-related questions regarding ODSP in Ontario. How can I help you?", "assistant", false);
+        const disclaimerEl = document.createElement("div");
+        disclaimerEl.style.cssText = "font-size:12px;color:#555;padding:4px 0 8px 46px;font-weight:bold;";
+        disclaimerEl.textContent = "Please note: this session is limited to " + MAX_MESSAGES + " messages.";
+        document.getElementById("chat").appendChild(disclaimerEl);
 
         // Load saved notes
         document.getElementById("notesText").value = localStorage.getItem("sw-notes") || "";
@@ -666,6 +807,21 @@ if __name__ == "__main__":
         function saveNotes() {
             localStorage.setItem("sw-notes", document.getElementById("notesText").value);
             alert("Notes saved!");
+        }
+
+        function submitFeedback(positive, row) {
+            row.innerHTML = `<span style="font-size:13px;color:#555;">${positive ? "👍 Thank you for your feedback!" : "👎 Thank you — we'll work to improve."}</span>`;
+        }
+
+        function toggleCard(h3) {
+            h3.closest('.card').classList.toggle('collapsed');
+        }
+
+        function toggleNav() {
+            const nav = document.querySelector(".nav-bar");
+            const btn = document.getElementById("navToggle");
+            nav.classList.toggle("collapsed");
+            btn.innerHTML = nav.classList.contains("collapsed") ? "↪" : "↩";
         }
 
         function switchTab(name, el) {
@@ -728,15 +884,37 @@ if __name__ == "__main__":
             return msg;
         }
 
+        function showLimitReached() {
+            const chat = document.getElementById("chat");
+            const notice = document.createElement("div");
+            notice.style.cssText = "text-align:center;padding:16px;color:#666;font-size:13px;background:#f4f4f4;border-radius:8px;margin:12px 0;";
+            notice.textContent = "You've reached the session limit of " + MAX_MESSAGES + " messages. Please do not message this chat anymore. This is a concept for a school assignment and we are charged per message that is sent to the agent. Thank you for chatting!";
+            chat.appendChild(notice);
+            chat.scrollTop = chat.scrollHeight;
+            document.getElementById("input").disabled = true;
+            document.getElementById("sendBtn").disabled = true;
+        }
+
         async function sendMessage() {
             const input = document.getElementById("input");
             const btn = document.getElementById("sendBtn");
             const message = input.value.trim();
             if (!message) return;
 
+            if (userMessageCount >= MAX_MESSAGES) {
+                showLimitReached();
+                return;
+            }
+
+            userMessageCount++;
             addMessage(message, "user");
             input.value = "";
             btn.disabled = true;
+
+            if (userMessageCount >= MAX_MESSAGES) {
+                showLimitReached();
+                return;
+            }
 
             const typing = document.createElement("div");
             typing.className = "typing";
@@ -755,7 +933,8 @@ if __name__ == "__main__":
             let reply = data.reply;
             const templateMatch = reply.match(/\[TEMPLATE\]([\s\S]*?)\[\/TEMPLATE\]/);
             const askPdf = reply.includes("[ASK_PDF]");
-            reply = reply.replace("[ASK_PDF]", "").trim();
+            const endConv = reply.includes("[END_CONV]");
+            reply = reply.replace("[ASK_PDF]", "").replace("[END_CONV]", "").trim();
 
             if (templateMatch) {
                 const templateHTML = templateMatch[1].trim();
@@ -795,8 +974,24 @@ if __name__ == "__main__":
                 }
             }
 
-            btn.disabled = false;
-            input.focus();
+            if (endConv) {
+                const feedbackRow = document.createElement("div");
+                feedbackRow.style.cssText = "display:flex;align-items:center;gap:10px;padding:10px 0 4px 46px;";
+                feedbackRow.innerHTML = `
+                    <span style="font-size:13px;color:#555;">Was this helpful?</span>
+                    <button onclick="submitFeedback(true, this.parentElement)" style="background:none;border:1px solid #ddd;border-radius:20px;padding:4px 12px;font-size:16px;cursor:pointer;color:#333;">👍</button>
+                    <button onclick="submitFeedback(false, this.parentElement)" style="background:none;border:1px solid #ddd;border-radius:20px;padding:4px 12px;font-size:16px;cursor:pointer;color:#333;">👎</button>
+                `;
+                document.getElementById("chat").appendChild(feedbackRow);
+                document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+            }
+
+            if (userMessageCount < MAX_MESSAGES) {
+                btn.disabled = false;
+                input.focus();
+            } else {
+                showLimitReached();
+            }
         }
 
         function exportMsgAsPDF(btn, html) {
