@@ -184,12 +184,16 @@
             padding: 16px 32px;
             border-top: 1px solid #ddd;
             display: flex;
+            flex-direction: row;
             gap: 12px;
             background: white;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         textarea {
-            flex: 1;
+            flex: 1 1 auto;
+            min-width: 0;
             padding: 12px 16px;
             border: 1px solid #bbb;
             border-radius: 2px;
@@ -199,6 +203,7 @@
             outline: none;
             height: 52px;
             max-height: 150px;
+            box-sizing: border-box;
         }
 
         textarea:focus { border-color: #00853F; box-shadow: 0 0 0 2px rgba(0,133,63,0.15); }
@@ -918,7 +923,7 @@ if __name__ == "__main__":
             row.appendChild(avatar);
             row.appendChild(msg);
             chat.appendChild(row);
-            shrinkBubble(msg);
+            if (role === 'assistant') shrinkBubble(msg);
             chat.scrollTop = chat.scrollHeight;
 
             return msg;
